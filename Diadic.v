@@ -464,23 +464,6 @@ Definition NEG_ROUND (m : rounding_mode) (p n : positive) :=
   BinInt.Zabs_N (- ZROUND m p (Zneg n)).
 
 
-(*****
-Lemma ZROUND_inf_POS :
-  (x:positive)(p:Z)(q:Z)(y:Z) 
-    ` 0 <= p` -> ` 0 <= q` 
-      -> ` y*(two_p p) <= (POS x) < (Zs y)*(two_p p)`
-         -> ` (two_p (p+q)) <= (POS x) < (two_p (Zs (p+q)))`
-            -> ` (two_p q) <= y < (two_p (Zs q))`.
-Intros x p q y Hp Hq.
-Repeat Rewrite two_p_S; Trivial.
-Repeat Rewrite two_p_is_exp; Trivial.
-Intros (I1,I2) (I3,I4); Split.
-Apply Zle_Zmult_right2 with (two_p p).
-Auto 2 with zarith.
-
-Omega.
-*******)
-
 (* (ROUND m p x) does verify :
    (Dproj m x {y:Z | (N_digits (Dexp x))=p \/ (Dexp x)=`0`} (ROUND m p x))
 
@@ -509,57 +492,6 @@ Axiom
         IF Dlt (Dzero 0) x then Dle y x /\ Dlt x (Dsucc y)
         else Dlt (Dpred y) x /\ Dle x y
     end}.
-
-(*********
-Lemma ROUND_spec :
-  (m:rounding_mode)(p:positive)(x:diadic)
-  { y:diadic | (N_digits (Dexp y))=p /\
-    Cases m of 
-       Rounding_inf =>  (Dle y x)/\(Dlt x (Dsucc y))
-   | Rounding_sup => 
-      (Dlt (Dpred y) x)/\(Dle x y)
-   | Rounding_nearest =>
-      (Dle (Dpred (Ddouble y)) (Ddouble x))
-      /\(Dle (Ddouble x) (Dsucc (Ddouble y)))
-   | Rounding_zero =>
-      IF (Dlt (Dzero `0`) x) 
-      then (Dle y x)/\(Dlt x (Dsucc y))
-      else (Dlt (Dpred y) x)/\(Dle x y)
-  end }.
-
-Intros m p (nx,ex).
-Realizer 
-  Cases ` p - (N_digits ex)` of
-     (POS q) => (Diadic ` nx * (two_power_pos q)` `ex - (POS q)`)
-   | (NEG q) => if (Zeq_bool (two_p (Zs p)) (ZROUND m q nx))
-               then (Diadic (two_power_pos p) `ex - (NEG q) + 1`)
-	       else (Diadic (ZROUND m q nx) ` ex - (NEG q)`)
-   | ZERO => (Diadic nx ex)
-   end.
-Program_all.
-Split.
-Simpl; Omega.
-Case m.
-
-Repeat Program.
-(* p - (N_digits ex) = ZER0 *)
-Split.
-Unfold Dpred;  Apply Dlt_Zlt; Simpl; Omega.
-Apply Dle_Zle; Apply Zle_n.
-Split.
-Apply Dle_Zle; Apply Zle_n.
-Unfold Dsucc;  Apply Dlt_Zlt; Simpl; Omega.
-Split.
-Unfold Dpred Ddouble. Unfold Dshift.
-  Apply Dle_Zle. Simpl; Omega.
-Unfold Dsucc Ddouble. Unfold Dshift.
-  Apply Dle_Zle. Simpl; Omega.
-(* p - (N_digits ex) = (POS p0) *)
-Elim 
-
-(* p - (N_digits ex) = (NEG p0) *)
-
- ... to be completed ********)
 
 Definition ROUND (m : rounding_mode) (p : Z) (d : diadic) :=
   let (x, _) := ROUND_spec m p d in x.

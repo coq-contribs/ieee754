@@ -218,7 +218,7 @@ elim (z ?= z)%Z; discriminate || trivial.
 rewrite (Zmult_comm nx (two_p n)).
 rewrite <- Zmult_assoc_reverse.
 rewrite <- two_p_is_exp. 
-ring (ex - n - Zmin ex (ex - n) + n)%Z (ex - Zmin ex (ex - n))%Z.
+ring_simplify (ex - n - Zmin ex (ex - n) + n)%Z (ex - Zmin ex (ex - n))%Z.
 reflexivity.
 generalize (Zle_min_l ex (ex - n)) (Zle_min_r ex (ex - n)).
 omega.

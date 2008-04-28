@@ -14,6 +14,6 @@ formalization do not use real numbers.
 
 See http://www.lri.fr/~loisel/rapport-stage-dea.ps.gz for a complete
 discussion (in french) of this work.
-Keywords: floating-point arithmetic IEEE
+Keywords: floating-point arithmetic, floats, IEEE
 Category: Computer Science/Data Types and Data Structures
 Category: Computer Science/Semantics and Compilation/Semantics

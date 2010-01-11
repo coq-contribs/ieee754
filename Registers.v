@@ -166,15 +166,15 @@ Fixpoint register_compare (n : nat) (x : register n)
  (m : nat) (y : register m) {struct y} : Datatypes.comparison :=
   match x with
   | regO => if is_register_zero m y then Datatypes.Eq else Datatypes.Lt
-  | regS n' bx x' =>
+  | regS n' b_x x' =>
       match y with
       | regO => if is_register_zero n x then Datatypes.Eq else Datatypes.Gt
-      | regS m' by y' =>
+      | regS m' b_y y' =>
           match register_compare n' x' m' y' with
           | Datatypes.Eq =>
-              if bx
-              then if by then Datatypes.Eq else Datatypes.Gt
-              else if by then Datatypes.Lt else Datatypes.Eq
+              if b_x
+              then if b_y then Datatypes.Eq else Datatypes.Gt
+              else if b_y then Datatypes.Lt else Datatypes.Eq
           | Datatypes.Gt => Datatypes.Gt
           | Datatypes.Lt => Datatypes.Lt
           end

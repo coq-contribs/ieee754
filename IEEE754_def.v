@@ -334,7 +334,7 @@ Definition abstract_of_concrete (x : concrete_IEEE) :=
            then Infty b
            else
             Normal b (Z_of_register (exp_l t) e - Ebias t)
-              (iter_nat (dig_l t) positive xO 1%positive)
+              (nat_rect _ 1%positive (fun _ => xO) (dig_l t) )
       | Npos p =>
           if is_register_zero (exp_l t) e
           then Subnormal b p
@@ -343,7 +343,7 @@ Definition abstract_of_concrete (x : concrete_IEEE) :=
            then NaN p
            else
             Normal b (Z_of_register (exp_l t) e - Ebias t)
-              (iter_nat (dig_l t) positive xO 1%positive + p)
+              (nat_rect _ 1%positive (fun _ => xO) (dig_l t) + p)
       end
   end.
 

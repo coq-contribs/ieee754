@@ -126,7 +126,7 @@ Definition register_of_Z (n : nat) (z : Z) : register n :=
   register_of_entier n (BinInt.Zabs_N z).
 
 (******************************************************
-*** Need the puiss of two 
+*** Need the power of two
 Lemma register_of_entier_bij1 : 
   (n:nat)(x:entier) (% x < (two_puiss_nat n)) ->
     (entier_of_register n (register_of_entier n x))=x.

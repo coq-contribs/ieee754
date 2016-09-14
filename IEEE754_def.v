@@ -386,7 +386,7 @@ Definition abstract_compare (x y : abstract_IEEE)
   end.
 
 (**************************************************************************)
-(*                     Derived comparisons functions                      *)
+(*                     Derived comparison functions                       *)
 (**************************************************************************)
 
 (* plus tard ! *)

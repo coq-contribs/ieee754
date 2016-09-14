@@ -488,5 +488,16 @@ End definitions.
 (*                    Pretty Printing of IEEE numbers                     *)
 (**************************************************************************)
 
-(* <Warning> : Syntax is discontinued *)
-(* <Warning> : Syntax is discontinued *)
+Notation "#+ m 'E' e" := (C_build _ true e m) (at level 25, only printing).
+Notation "#- m 'E' e" := (C_build _ false e m) (at level 25, only printing).
+
+(* One would need a specific printer *)
+Notation "0" := regO (only printing).
+Notation "r 1" := (regS _ true r)
+  (at level 24, left associativity, only printing).
+Notation "r 0" := (regS _ false r)
+  (at level 24, left associativity, only printing).
+
+Check (C_build Single false
+         (regS _ true (regS _ true (regS _ true (regS _ true (regS _ true (regS _ true (regS _ true (regS _ true regO))))))))
+         (regS _ false (regS _ true (regS _ true (regS _ false (regS _ true (regS _ true (regS _ true (regS _ false (regS _ true (regS _ true (regS _ true (regS _ true (regS _ false (regS _ true (regS _ true (regS _ true (regS _ true (regS _ false (regS _ true (regS _ true (regS _ true (regS _ false (regS _ true regO)))))))))))))))))))))))).

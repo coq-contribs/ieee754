@@ -92,7 +92,7 @@ Definition Dcompare (x y : diadic) : Datatypes.comparison :=
   let ny := Dnum y in
   let ex := Dexp x in
   let ey := Dexp y in
-  (two_p (ex - Zmin ex ey) * nx ?= two_p (ey - Zmin ex ey) * ny)%Z.
+  (two_p (ex - Z.min ex ey) * nx ?= two_p (ey - Z.min ex ey) * ny)%Z.
 
 (* Inductive relation := EGAL | INFERIEUR | SUPERIEUR *) 
 Definition Deq (x y : diadic) :=
@@ -191,10 +191,10 @@ Lemma Dcompare_zero :
 intros (nx, ex) n. 
 unfold Dcompare in |- *; simpl in |- *.
 symmetry  in |- *.
-replace (two_p (n - Zmin ex n) * 0)%Z with (two_p (ex - Zmin ex n) * 0)%Z.
+replace (two_p (n - Z.min ex n) * 0)%Z with (two_p (ex - Z.min ex n) * 0)%Z.
 apply Zmult_compare_compat_l. 
 apply two_p_gt_ZERO.
-generalize (Zle_min_l ex n); generalize (Zmin ex n); intro; omega.
+generalize (Z.le_min_l ex n); generalize (Z.min ex n); intro; omega.
 do 2 rewrite Zmult_0_r; reflexivity.
 Qed.
 
@@ -209,18 +209,18 @@ Lemma Deq_x_shift_x :
 intros (nx, ex) n Hn; unfold Deq in |- *; unfold Dcompare in |- *;
  simpl in |- *.
 cut
- ((two_p (ex - Zmin ex (ex - n)) * nx)%Z =
-  (two_p (ex - n - Zmin ex (ex - n)) * (nx * two_p n))%Z).
+ ((two_p (ex - Z.min ex (ex - n)) * nx)%Z =
+  (two_p (ex - n - Z.min ex (ex - n)) * (nx * two_p n))%Z).
 intro H; rewrite H.
-generalize (two_p (ex - n - Zmin ex (ex - n)) * (nx * two_p n))%Z.
-intros. generalize (Zcompare.Zcompare_refl z).
+generalize (two_p (ex - n - Z.min ex (ex - n)) * (nx * two_p n))%Z.
+intros. generalize (Z.compare_refl z).
 elim (z ?= z)%Z; discriminate || trivial.
 rewrite (Zmult_comm nx (two_p n)).
 rewrite <- Zmult_assoc_reverse.
 rewrite <- two_p_is_exp. 
-ring_simplify (ex - n - Zmin ex (ex - n) + n)%Z (ex - Zmin ex (ex - n))%Z.
+ring_simplify (ex - n - Z.min ex (ex - n) + n)%Z (ex - Z.min ex (ex - n))%Z.
 reflexivity.
-generalize (Zle_min_l ex (ex - n)) (Zle_min_r ex (ex - n)).
+generalize (Z.le_min_l ex (ex - n)) (Z.le_min_r ex (ex - n)).
 omega.
 assumption.
 Qed.
@@ -332,12 +332,12 @@ Definition Dadd (x y : diadic) :=
   let ny := Dnum y in
   let ex := Dexp x in
   let ey := Dexp y in
-  Diadic (two_p (ex - Zmin ex ey) * nx + two_p (ey - Zmin ex ey) * ny)
-    (Zmin ex ey).
+  Diadic (two_p (ex - Z.min ex ey) * nx + two_p (ey - Z.min ex ey) * ny)
+    (Z.min ex ey).
 
 Definition Dopp (x : diadic) := Diadic (- Dnum x) (Dexp x).
 
-Definition Dabs (x : diadic) := Diadic (Zabs (Dnum x)) (Dexp x).
+Definition Dabs (x : diadic) := Diadic (Z.abs (Dnum x)) (Dexp x).
 
 Definition Dminus (x y : diadic) := Dadd x (Dopp y).
 
@@ -396,12 +396,12 @@ Definition Dproj (m : rounding_mode) (x : diadic) (P : diadic -> Prop)
 
 Lemma ZROUND_inf_spec :
  forall (p : positive) (x : Z),
- {y : Z | (y * two_power_pos p <= x < Zsucc y * two_power_pos p)%Z}.
+ {y : Z | (y * two_power_pos p <= x < Z.succ y * two_power_pos p)%Z}.
 intros; elim (Zdiv_rest_correct x p); intros q r Hx Hr1 Hr2; exists q;
  rewrite (Zplus_0_r_reverse (q * two_power_pos p)); 
  rewrite Hx; split;
  [ apply Zplus_le_compat_l; assumption
- | unfold Zsucc in |- *; rewrite Zmult_plus_distr_l; apply Zplus_lt_compat_l;
+ | unfold Z.succ in |- *; rewrite Zmult_plus_distr_l; apply Zplus_lt_compat_l;
     rewrite Zmult_1_l; assumption ].
 Qed.
 
@@ -410,18 +410,18 @@ Definition ZROUND_inf (p : positive) (x : Z) :=
 
 Lemma ZROUND_sup_spec :
  forall (p : positive) (x : Z),
- {y : Z | (Zpred y * two_power_pos p < x <= y * two_power_pos p)%Z}.
+ {y : Z | (Z.pred y * two_power_pos p < x <= y * two_power_pos p)%Z}.
 intros; elim (Zdiv_rest_correct x p); intros q r; elim r;
  [ intros Hx Hr; exists q; rewrite Hx; rewrite <- Zplus_0_r_reverse; split;
     [ apply Zmult_gt_0_lt_compat_r;
        [ compute in |- *; reflexivity | apply Zlt_pred ]
-    | apply Zle_refl ]
- | intros p0 Hx Hr1 Hr2; exists (Zsucc q); rewrite Hx; split;
-    [ replace (Zpred (Zsucc q) * two_power_pos p)%Z with
+    | apply Z.le_refl ]
+ | intros p0 Hx Hr1 Hr2; exists (Z.succ q); rewrite Hx; split;
+    [ replace (Z.pred (Z.succ q) * two_power_pos p)%Z with
        (q * two_power_pos p + 0)%Z;
        [ apply Zplus_lt_compat_l; compute in |- *; reflexivity
        | rewrite <- Zpred_succ; rewrite <- Zplus_0_r_reverse; reflexivity ]
-    | unfold Zsucc in |- *; rewrite Zmult_plus_distr_l;
+    | unfold Z.succ in |- *; rewrite Zmult_plus_distr_l;
        apply Zplus_le_compat_l; rewrite Zmult_1_l; 
        apply Zlt_le_weak; assumption ]
  | intros p0 Hx Hr1 Hr2; absurd (Datatypes.Gt = Datatypes.Gt);
@@ -435,24 +435,24 @@ Lemma ZROUND_correct :
  forall (m : rounding_mode) (p : positive) (x : Z),
  {y : Z |
  match m with
- | Rounding_inf => (y * two_power_pos p <= x < Zsucc y * two_power_pos p)%Z
- | Rounding_sup => (Zpred y * two_power_pos p < x <= y * two_power_pos p)%Z
+ | Rounding_inf => (y * two_power_pos p <= x < Z.succ y * two_power_pos p)%Z
+ | Rounding_sup => (Z.pred y * two_power_pos p < x <= y * two_power_pos p)%Z
  | Rounding_nearest =>
      match (x - ZROUND_inf p x ?= ZROUND_sup p x - x)%Z with
      | Datatypes.Eq =>
          if Zeven.Zeven_bool (ZROUND_inf p x)
-         then (y * two_power_pos p <= x < Zsucc y * two_power_pos p)%Z
-         else (Zpred y * two_power_pos p < x <= y * two_power_pos p)%Z
+         then (y * two_power_pos p <= x < Z.succ y * two_power_pos p)%Z
+         else (Z.pred y * two_power_pos p < x <= y * two_power_pos p)%Z
      | Datatypes.Gt =>
-         (Zpred y * two_power_pos p < x <= y * two_power_pos p)%Z
+         (Z.pred y * two_power_pos p < x <= y * two_power_pos p)%Z
      | Datatypes.Lt =>
-         (y * two_power_pos p <= x < Zsucc y * two_power_pos p)%Z
+         (y * two_power_pos p <= x < Z.succ y * two_power_pos p)%Z
      end
  | Rounding_zero =>
      match x with
-     | Zpos _ => (y * two_power_pos p <= x < Zsucc y * two_power_pos p)%Z
+     | Zpos _ => (y * two_power_pos p <= x < Z.succ y * two_power_pos p)%Z
      | Z0 => y = 0%Z
-     | Zneg _ => (Zpred y * two_power_pos p < x <= y * two_power_pos p)%Z
+     | Zneg _ => (Z.pred y * two_power_pos p < x <= y * two_power_pos p)%Z
      end
  end}.
 simple destruct m;
@@ -473,11 +473,11 @@ Definition ZROUND (m : rounding_mode) (p : positive)
   (x : Z) := let (x', p) := ZROUND_correct m p x in x'.
 
 Definition POS_ROUND (m : rounding_mode) (p n : positive) :=
-  BinInt.Zabs_N (ZROUND m p (Zpos n)).
+  BinInt.Z.abs_N (ZROUND m p (Zpos n)).
 
 
 Definition NEG_ROUND (m : rounding_mode) (p n : positive) :=
-  BinInt.Zabs_N (- ZROUND m p (Zneg n)).
+  BinInt.Z.abs_N (- ZROUND m p (Zneg n)).
 
 
 (* (ROUND m p x) does verify :

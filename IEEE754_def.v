@@ -59,8 +59,8 @@ Definition exp_length (t : float_type) :=
   | Quad => 15%Z
   end.
 
-Definition dig_l (t : float_type) := Zabs_nat (dig_length t).
-Definition exp_l (t : float_type) := Zabs_nat (exp_length t).
+Definition dig_l (t : float_type) := Z.abs_nat (dig_length t).
+Definition exp_l (t : float_type) := Z.abs_nat (exp_length t).
 
 (* The exposants in the machine representation (see section machine) 
    are between -2^N + 1 and 2^N where N=(exp_length t)-1. But
@@ -221,7 +221,7 @@ Definition abstract_of_diadic (m : rounding_mode) (x : diadic) :=
            match POS_ROUND m e p with
            | N0 => Zero true
            | Npos q =>
-               if Zbool.Zge_bool (Zpos q) (two_p (Zsucc (dig_length t)))
+               if Zbool.Zge_bool (Zpos q) (two_p (Z.succ (dig_length t)))
                then Normal true (Emin t) q
                else Subnormal true q
            end
@@ -236,7 +236,7 @@ Definition abstract_of_diadic (m : rounding_mode) (x : diadic) :=
            match NEG_ROUND m e p with
            | N0 => Zero false
            | Npos q =>
-               if Zbool.Zge_bool (Zpos q) (two_p (Zsucc (dig_length t)))
+               if Zbool.Zge_bool (Zpos q) (two_p (Z.succ (dig_length t)))
                then Normal false (Emin t) q
                else Subnormal false q
            end
@@ -260,7 +260,7 @@ Definition abstract_of_diadic_s (m : rounding_mode)
            match POS_ROUND m e p with
            | N0 => (Zero true, Inexact_underflow)
            | Npos q =>
-               if Zbool.Zge_bool (Zpos q) (two_p (Zsucc (dig_length t)))
+               if Zbool.Zge_bool (Zpos q) (two_p (Z.succ (dig_length t)))
                then (Normal true (Emin t) q, Nothing)
                else (Subnormal true q, Underflow)
            end
@@ -275,7 +275,7 @@ Definition abstract_of_diadic_s (m : rounding_mode)
            match NEG_ROUND m e p with
            | N0 => (Zero false, Inexact_underflow)
            | Npos q =>
-               if Zbool.Zge_bool (Zpos q) (two_p (Zsucc (dig_length t)))
+               if Zbool.Zge_bool (Zpos q) (two_p (Z.succ (dig_length t)))
                then (Normal false (Emin t) q, Nothing)
                else (Subnormal false q, Underflow)
            end

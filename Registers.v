@@ -85,7 +85,7 @@ Fixpoint entier_of_register (n : nat) (x : register n) {struct x} : N :=
   | regS m b y =>
       if b
       then Ndouble_plus_one (entier_of_register m y)
-      else Ndouble (entier_of_register m y)
+      else N.double (entier_of_register m y)
   end.
 Definition Z_of_register (n : nat) (x : register n) :=
   BinInt.Z_of_N (entier_of_register n x).
@@ -123,7 +123,7 @@ Definition register_of_entier (n : nat) (x : N) :=
   | Npos p => register_of_pos n p
   end.
 Definition register_of_Z (n : nat) (z : Z) : register n :=
-  register_of_entier n (BinInt.Zabs_N z).
+  register_of_entier n (BinInt.Z.abs_N z).
 
 (******************************************************
 *** Need the power of two
@@ -158,7 +158,7 @@ simple induction x;
     [ simpl in |- *; unfold Ndouble_plus_one in |- *;
        elim (entier_of_register m r); intros; rewrite <- H; 
        reflexivity
-    | simpl in |- *; unfold Ndouble in |- *; elim (entier_of_register m r);
+    | simpl in |- *; unfold N.double in |- *; elim (entier_of_register m r);
        intros; rewrite <- H; reflexivity ] ].
 Qed.
 
